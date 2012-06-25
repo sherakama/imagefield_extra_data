@@ -1,0 +1,179 @@
+<?php
+
+/**
+ * @file
+ * Adds additional data to image fields
+ * 
+ **/
+
+
+/**
+ * Implementation of hook_help().
+ */
+function imagefield_extra_data_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#imagefield_extra_data':
+      return '<p>'. t('') .'</p>';
+  }
+}
+
+
+/**
+ * Implementation of hook_init().
+ */
+function imagefield_extra_data_init() {
+  
+}
+
+
+/**
+ * Implementation of hook_menu().
+ */
+function imagefield_extra_data_menu() {
+  $items = array();
+
+  // Type '$item ⇥' to create a new menu item.
+
+  return $items;
+}
+
+/**
+ * Implementation of hook elements
+ * 
+ * 
+ **/
+
+function imagefield_extra_data_elements() {
+ $elements = array();
+ 
+ $elements['imagefield_widget'] = array(
+  '#process' => 'imagefield_extra_data_element_process',
+  //'#after_build' => array('imagefield_extra_data_element_process_after_build'),
+ );
+ 
+ 
+ return $elements;
+}
+
+
+/**
+ * imagefield_extra_data process function for imagecache enabled fields
+ * 
+ **/
+
+function imagefield_extra_data_element_process($element, $edit, $form, &$form_state) {
+  
+  // if not enabled GTFO !!
+  $item = $element['#value'];
+  $field = content_fields($element['#field_name'], $element['#type_name']);
+
+  $widget_settings = $field['widget'];
+  $widget_type = $field['widget']['type'];
+    
+  // Bail out of Insert is not enabled on this field.
+  if (empty($widget_settings['imagefield_extra_data_enabled'])) {
+    return $element;
+  }
+  
+  // GO!
+  $opts = array('none'=>'none');
+  $presets = imagecache_presets();
+    
+  foreach($presets as $k => $v) {
+    $opts[$v['presetid']] = $v['presetname'];
+  }
+  
+  // Always provide a file name property.
+  $element['data']['responsive_data']['imagecache'] = array(
+    '#type' => 'select',
+    '#options' => $opts,
+    '#title' => t('Imagecache setting'),
+    '#default_value' => $element['#value']['data']['responsive_data']['imagecache'],
+  );
+  
+  // Breakpoint
+  $opts = array(
+    '0' => '1 (min)',
+    '1' => '2 [small]',
+    '2' => '3',
+    '3' => '4',
+    '4' => '5 [large]',
+  );
+  
+  $element['data']['responsive_data']['breakpoint'] = array(
+    '#type' => 'select',
+    '#title' => t('Break Point'),
+    '#options' => $opts,
+    '#default_value' => $element['#value']['data']['responsive_data']['breakpoint'],
+  );
+  
+  
+  return $element;
+}
+
+
+/**
+ * Implementation of hook_widget_settings_alter().
+ */
+function imagefield_extra_data_widget_settings_alter(&$settings, $op, $widget) {
+  
+  // Add our new options to the list of settings to be saved.
+  if ($op == 'save') {
+    $settings = array_merge($settings, imagefield_extra_data_widget_settings());
+  }
+
+  if($widget['module'] !== "imagefield") { return; }
+
+  // Add the additional settings to the form.
+  if ($op == 'form') {
+    $settings = array_merge($settings, imagefield_extra_data_widget_form($widget));
+  }
+}
+
+/**
+ * A list of settings needed by imagefield_extra_data module on widgets.
+ */
+function imagefield_extra_data_widget_settings() {
+  return array(
+    'imagefield_extra_data_enabled'
+  );
+}
+
+/**
+ * Configuration form for editing imagefield_extra_data settings for a field instance.
+ */
+function imagefield_extra_data_widget_form($widget) {
+
+
+  $form['imagefield_extra_data'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Responsive Image Data'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#description' => t('Allows the selection of a break point and imagecache style'),
+    '#weight' => 15,
+  );
+
+  $form['imagefield_extra_data']['imagefield_extra_data_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable imagefield_extra_data'),
+    '#default_value' => (bool) $widget['imagefield_extra_data_enabled'],
+    '#description' => t('Enable the insert button and options for this widget.'),
+  );
+
+
+
+  return $form;
+}
+
+
+
+
+
+
+
+
+
+
+
+

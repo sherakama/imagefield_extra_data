@@ -1,0 +1,10 @@
+name = Imagefield Extra Data
+description = "Adds additional information to an imagefield"
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-04-19
+version = "6.x-1.6"
+core = "6.x"
+project = "imagefield_extra_data"
+datestamp = "1271640000"
+

@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function imagefield_extra_data_install() {
+//  drupal_install_schema('imagefield_extra_data');
+}
+
+
+
+
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function imagefield_extra_data_uninstall() {
+   
+}
+
+
+/**
+ * Implements hook_schema().
+ */
+function imagefield_extra_data_schema() {
+  $schema = array();
+  // Type '$schema ⇥' to create a new database table schema.
+  // Type '$schema ⇥' to create a new database table schema.
+  return $schema;
+}
+
